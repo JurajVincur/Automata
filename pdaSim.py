@@ -325,7 +325,6 @@ if __name__=="__main__":
         font = font
     )
     text_area_T.grid(row = 5, column = 0, pady = (0,10), padx = 10)
-    text_area.insert(tk.INSERT, "")
 
     label = Label(text = "Priebeh", anchor="w", font=font)
     label.grid(row=0, column=1, sticky="w", padx=10, pady=(10,0))
@@ -368,8 +367,10 @@ if __name__=="__main__":
     button1=tk.Button(bframe, text="Krok", command=lambda: automaton.step(text_area_T, text_area_F, text_area_I, text_area_C))
     button1.grid(row = 0, column = 1, pady = (0,10))
 
-
+    #shortcut for pasting from clipboard
     win.bind("<Control-V>", lambda x: win.focus_get().insert(tk.INSERT,win.clipboard_get()))
+
+
     # Placing cursor in the text area
     text_area_T.focus()
     win.resizable(False, False)
