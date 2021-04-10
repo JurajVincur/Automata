@@ -1,16 +1,26 @@
 import tkinter as tk
-from tkinter import scrolledtext, Label, Frame
+from tkinter import scrolledtext, Label, Frame, Text
 import re
 from automata.pda.npda import NPDA
 from automata.pda.stack import PDAStack
 from automata.pda.configuration import PDAConfiguration
 from automata.base.exceptions import RejectionException
+from functools import partial
 
 def norm(txt):
     return re.sub("[^\S\r\n]", "", txt)
     
 def removeNLs(txt):
     return re.sub("[\r\n]", "", txt)
+
+def parseSpeed(s):
+    try:
+        value = int(s)
+        if value <= 0:
+             value = 1000
+    except ValueError:
+        return 1000;
+    return value
 
 class AsciiTree:
     
@@ -155,6 +165,7 @@ class Automaton:
         self.steps = None
         self.asciiTree = AsciiTree((3,20))
         self.canStep = True
+        self.simulating = False
         return
         
     def stop(self, text_area_C=None):
@@ -163,6 +174,7 @@ class Automaton:
         if text_area_C is not None:
             text_area_C.delete('1.0', 'end')
         self.canStep = True
+        self.simulating = False
         self.asciiTree = AsciiTree((3,20))
         return
         
@@ -366,7 +378,25 @@ if __name__=="__main__":
 
     button1=tk.Button(bframe, text="Krok", command=lambda: automaton.step(text_area_T, text_area_F, text_area_I, text_area_C))
     button1.grid(row = 0, column = 1, pady = (0,10))
-      
+
+    def __simuluj(speed):
+        if automaton.simulating == True  and automaton.canStep == True:
+            automaton.step(text_area_T, text_area_F, text_area_I, text_area_C);
+            text_area_C.after(speed,lambda: __simuluj(speed))
+    def simuluj():
+        if automaton.simulating == False:
+            automaton.simulating = True
+            speed = parseSpeed(simSpeedTxt.get())
+            __simuluj(speed)
+
+    simButton=tk.Button(bframe, text="Simuluj", command=simuluj)
+    simButton.grid(row = 0, column = 2, pady = (0,10))
+    
+    simSpeedTxt = tk.Entry(bframe)
+    simSpeedTxt.insert(0,"1000")
+    simSpeedTxt.grid(row = 0,column = 3,pady = (0,10))
+
+
     # Placing cursor in the text area
     text_area_T.focus()
     win.resizable(False, False)
