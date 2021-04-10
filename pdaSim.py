@@ -13,6 +13,15 @@ def norm(txt):
 def removeNLs(txt):
     return re.sub("[\r\n]", "", txt)
 
+def parseSpeed(s):
+    try:
+        value = int(s)
+        if value <= 0:
+             value = 1000
+    except ValueError:
+        return 1000;
+    return value
+
 class AsciiTree:
     
     BLTCORNER = "┌"
@@ -379,15 +388,6 @@ if __name__=="__main__":
             automaton.simulating = True
             speed = parseSpeed(simSpeedTxt.get())
             __simuluj(speed)
-
-    def parseSpeed(s):
-        try:
-            value = int(s)
-            if value <= 0:
-                value = 1000
-        except ValueError:
-            return 1000;
-        return value
 
     simButton=tk.Button(bframe, text="Simuluj", command=simuluj)
     simButton.grid(row = 0, column = 2, pady = (0,10))
