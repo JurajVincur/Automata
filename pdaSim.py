@@ -155,6 +155,7 @@ class Automaton:
         self.steps = None
         self.asciiTree = AsciiTree((3,20))
         self.canStep = True
+        self.simulating = False
         return
         
     def stop(self, text_area_C=None):
@@ -163,6 +164,7 @@ class Automaton:
         if text_area_C is not None:
             text_area_C.delete('1.0', 'end')
         self.canStep = True
+        self.simulating = False
         self.asciiTree = AsciiTree((3,20))
         return
         
@@ -366,6 +368,18 @@ if __name__=="__main__":
 
     button1=tk.Button(bframe, text="Krok", command=lambda: automaton.step(text_area_T, text_area_F, text_area_I, text_area_C))
     button1.grid(row = 0, column = 1, pady = (0,10))
+
+    def __simuluj():
+        if automaton.simulating == True  and automaton.canStep == True:
+            automaton.step(text_area_T, text_area_F, text_area_I, text_area_C);
+            text_area_C.after(500,__simuluj)
+    def simuluj():
+        if automaton.simulating == False:
+            automaton.simulating = True
+            __simuluj()
+
+    simButton=tk.Button(bframe, text="Simuluj", command=simuluj)
+    simButton.grid(row = 0, column = 2, pady = (0,10))
 
     #shortcut for pasting from clipboard
     win.bind("<Control-V>", lambda x: win.focus_get().insert(tk.INSERT,win.clipboard_get()))
